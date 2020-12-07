@@ -58,12 +58,12 @@ public class SSLConnectToServer
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
 		// Load the certificate
-		InputStream caInput = new BufferedInputStream(new FileInputStream(new File("src/server_crt.crt")));
+		InputStream caInput = new BufferedInputStream(new FileInputStream(new File("server_crt.crt")));
 
 		Certificate ca;
 		try {
 			ca = cf.generateCertificate(caInput);
-			System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+			//System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
 		} finally {
 			caInput.close();
 		}
@@ -137,19 +137,17 @@ public class SSLConnectToServer
      * @param message input message
      * @return response from server
      */
-    public String SendForAnswer(String message)
+    public int getMessage()
     {
-        String response = new String();
+        int response = 0;
         try
         {
-            os.println(message);
-            os.flush();
-            response = is.readLine();
+            response = is.read();
         }
         catch(IOException e)
         {
             e.printStackTrace();
-            System.out.println("ConnectionToServer. SendForAnswer. Socket read Error");
+            System.out.println("SLLConnectToServer. getMessage. Socket read Error");
         }
         return response;
     }

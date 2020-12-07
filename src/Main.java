@@ -15,29 +15,33 @@
  */
 public class Main
 {
+    public final static int KUSIS_ID = 60326;
+    public final static int DD_MM_YY = 210498;
     public final static String TLS_SERVER_ADDRESS = "localhost";
-    public final static String MESSAGE_TO_TLS_SERVER = "hello from client";
-    public final static int TLS_SERVER_PORT = 4444;
+    public final static int CERTIFICATE_PORT = 4444;
+    public final static int TLS_SERVER_PORT = 1024 + ((KUSIS_ID + DD_MM_YY) % 65535);
 
     public static void main(String[] args) throws Exception
     {
-        /*
-        Creates an SSLConnectToServer object on the specified server address and port
-         */
+        SLLCertifier certifier = new SLLCertifier(TLS_SERVER_ADDRESS, CERTIFICATE_PORT);
+        certifier.connect();
+        if(!certifier.getCertificate()){
+            System.err.println("Couldn't get the certificate, terminating.");
+            return;
+        }
+
         SSLConnectToServer sslConnectToServer = new SSLConnectToServer(TLS_SERVER_ADDRESS, TLS_SERVER_PORT);
-        /*
-        Connects to the server
-         */
         sslConnectToServer.Connect();
-
-        /*
-        Sends a message over SSL socket to the server and prints out the received message from the server
-         */
-        System.out.println(sslConnectToServer.SendForAnswer(MESSAGE_TO_TLS_SERVER));
-
-        /*
-        Disconnects from the SSL server
-         */
+        // Receive the KUSIS username and KUSIS ID here..
+        StringBuilder message = new StringBuilder();
+        int c;
+        while((c = sslConnectToServer.getMessage()) != -1) {
+            char character = (char) c;
+            message.append(character);
+        }
+        System.out.println("Message received: " + message);
         sslConnectToServer.Disconnect();
+
+
     }
 }
