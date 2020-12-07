@@ -143,6 +143,9 @@ public class SSLConnectToServer
         try
         {
             response = is.read();
+            os.write(1);
+            os.flush();
+
         }
         catch(IOException e)
         {
